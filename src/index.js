@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import Homepage from "./components/Homepage";
@@ -13,6 +13,9 @@ import EditActivity from "./components/EditActivity";
 import NewActivity from "./components/NewActivity";
 import NewRoutine from "./components/AddRoutine";
 import ActivityDetails from "./components/DetailedActivities";
+import SingleRoutine from "./components/SingleRoutine";
+
+const root = createRoot(document.getElementById('app'))
 
 const router = createBrowserRouter([
   {
@@ -37,9 +40,13 @@ const router = createBrowserRouter([
         element: <Routines />,
       },
       {
+        path:"routines/:routineId",
+        element: <SingleRoutine />
+      },
+      {
         path: "activities",
         element: <Activities />,
-        chlidren: [
+        children: [
           {
             path: "activities/:activityId",
             element: <EditActivity />,
@@ -66,7 +73,4 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.render(
-  <RouterProvider router={router} />,
-  document.getElementById("app")
-);
+root.render(<RouterProvider router={router}/>);

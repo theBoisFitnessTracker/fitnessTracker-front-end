@@ -1,12 +1,12 @@
-
-
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 
  
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("")
+    const { isLoggedInState: [isLoggedIn, setIsLoggedIn] } = useOutletContext()
     const navigate = useNavigate();
  
     function handleUsernameChange(event) {
@@ -17,7 +17,8 @@ const Login = () => {
         console.log(event.target.value);
         setPassword(event.target.value);
     }
- 
+    // useEffect(() => {},[error])
+
     async function setRegisterInfo(event) {
         event.preventDefault()
         try {
@@ -30,16 +31,20 @@ const Login = () => {
                         
                     },
                     body: JSON.stringify({
-                            username: username,
-                            password: password
-                        
+                        username,
+                        password
                     })
                 }
             )
-            const data = await response.json();
-            console.log("This was our request's returned promise: ", data.token);
-            localStorage.setItem("token", data.token);
-            navigate("/Routines");
+            const {token} = await response.json();
+            if (token) {
+            console.log("This was our request's returned promise: ", token);
+            localStorage.setItem("token", token)
+            setIsLoggedIn(true)
+            navigate("/routines");
+           } else {
+            setError("please try again, username and password incorrect")
+           } // deal with setError and error later
         } catch (error) {
             console.log(error)
         }
@@ -67,7 +72,7 @@ const Login = () => {
                     ></input><br/><br/>
                         <button type="submit">Login</button>
                 </form>
-                <p> Don't have a login? <Link to="Register">Register Here!</Link></p>
+                <p> Don't have a login? <Link to="register">Register Here!</Link></p>
             </div>
         </div>
     )

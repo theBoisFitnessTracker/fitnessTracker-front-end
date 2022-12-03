@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from "react";
 import {
-  useOutletContext as activitesArr,
   useParams,
   Link,
   useOutletContext,
 } from "react-router-dom";
 
 const ActivityDetails = () => {
-  const { activitesArr } = useOutletContext();
-  const [activities, setActivities] = activitesArr;
+  const { activitesArr: [activities, setActivities] } = useOutletContext();
   const [activity, setActivity] = useState({});
-  const [isEdit, setIsEdit] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
     if (activities.length) {
-      const foundActvitity = activities.find((activity) => {
-        return id == activity.id;
-      });
+      const foundActvitity = activities.find(activity => id == activity.id);
       setActivity(foundActvitity);
     }
   }, []);
 
-  if (activity.id) {
-    return (
+  activity ? (
       <div>
         <div>
           <p>{activity.name}</p>
@@ -31,11 +25,14 @@ const ActivityDetails = () => {
           <p> {activity.description}</p>
         </div>
         <div>
-          <Link to="editactivity">edit</Link>
+          <Link to="editactivity">Edit</Link>
         </div>
       </div>
-    );
+    ) : (
+      <div> 
+        <h1>No Activities</h1>
+      </div>
+    )
   }
-};
 
 export default ActivityDetails;

@@ -23,7 +23,7 @@ const RoutineEdit = () => {
   async function submitRoutineEdit (event) {
     event.preventDefault();
     try {
-      const response = await fetch (`https://fitnesstrac-kr.herokuapp.com/api/routines/${id}`, 
+      const response = await fetch (`http://fitnesstrac-kr.herokuapp.com/api/routines/${id}`, 
       {
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +80,6 @@ const RoutineEdit = () => {
         <button type="submit">Update Routine</button>
         <br /><br />
         <DeleteRoutine />
-
       </form>
     </div>
   )

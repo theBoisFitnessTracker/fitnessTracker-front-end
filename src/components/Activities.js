@@ -1,43 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useOutletContext, Link } from "react-router-dom";
+import { useOutletContext, Link, useNavigate } from "react-router-dom";
+import SingleActivity from './SingleActivity.js'
+import NewActivity from "./NewActivity.js";
 
 const ActivitiesPage = () => {
-  const { activitesArr } = useOutletContext();
-  const [activites, setActivities] = activitesArr;
+  const { activitesArr: [activites, setActivities] } = useOutletContext();
+  const [isNewActivity , setIsNewActivity] = useState(false)
+  // jeremy: { key: [const1, const2]} = obj (from context)
+
+  const handleIsNewActivity = () => setIsNewActivity(!isNewActivity)
 
   return (
     <div>
       <div>
         <p id="activitiesList">Check Out These Workouts!</p>
         <p>Create Your Own Activities!</p>
-        <Link to="/Login">Login to Create an Activity!</Link>
+        <button onClick={handleIsNewActivity}></button>
+        {
+          isNewActivity ? <NewActivity /> : null
+        }
+        <Link to="/login">Login to Create an Activity!</Link>
         <div id="activities">
-          {activites && !!activites.length ? (
-            activites.map((activity) => {
-              return (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    paddingTop: "20px",
-                  }}
-                >
-                  <div
-                    style={postStyle}
-                    id="indivActivityPost"
-                    key={activity.id}
-                  >
-                    <p>{activity.creatorName}</p>
-                    <p>{activity.name}</p>
-                    <p>{activity.description}</p>
-                    <Link to={`/activties/${activity._id}`}>Check It Out!</Link>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <p>No activities at this time!</p>
-          )}
+          {
+            activites && !!activites.length
+              ? activites.map((activity, idx) => <SingleActivity activity={activity} key={idx}/>)
+              : <p>No activities at this time!</p>
+          }
         </div>
       </div>
     </div>

@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 
 const EditActivity = () => {
-  const [error, setError] = useState("");
-  const [name, setName] = useState("");
-  const { activitesArr } = useOutletContext();
-  const [activities, setActivities] = activitiesArr;
+  const { activitesArr: [activities, setActivities] } = useOutletContext();
   const [activity, setActivity] = useState({});
   const [profileData, setProfileData] = useState([]);
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [description, setEditDescription] = useState("");
   const { id } = useParams();
-  const [desc, setEditDesc] = useState("");
 
   const navigate = useNavigate();
 
@@ -25,24 +24,18 @@ const EditActivity = () => {
           },
           method: "PATCH",
           body: JSON.stringify({
-            post: {
-              name: name,
-              description: desc,
-            },
-          }),
+              name,
+              description
+            })
         }
       );
 
       const editedActivity = await response.json();
       if (editedActivity) {
         setActivity(editedActivity);
-        const editActivities = await fetch(
-          "http://fitnesstrac-kr.herokuapp.com/api/activities"
-        );
+        const editActivities = await fetch("http://fitnesstrac-kr.herokuapp.com/api/activities");
         const translatedEditActivities = await editActivities.json();
-
         setActivities(translatedEditActivities);
-
         navigate("/profile");
       } else {
         setError("Could not edit activty.");

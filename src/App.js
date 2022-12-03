@@ -1,57 +1,37 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import { getAllActivities } from './utilities/activities'
+import { getRoutines } from "./utilities/routines";
+import { fetchProfileData } from "./utilities/profile";
 
 const App = () => {
-  const [activites, setActivities] = useState([]);
+  const [profile, setProfile] = useState({})
+  const [activities, setActivities] = useState([]);
   const [routines, setRoutines] = useState([]);
+  const [personalRoutines, setPersonalRoutines] = useState([])
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
-    async function getAllActivities() {
-      try {
-        const data = await fetch(
-          "http://fitnesstrac-kr.herokuapp.com/api/activities",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const results = await data.json();
-        setActivities(results);
-        console.log(results);
-      } catch (error) {
-        console.error(error.detail);
-      }
-    }
-    getAllActivities();
+    getAllActivities(setActivities);
+    getRoutines(setRoutines);
   }, []);
 
   useEffect(() => {
-    async function postHandler() {
-      try {
-        const response = await fetch(
-          "http://fitnesstrac-kr.herokuapp.com/api/routines",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data = await response.json();
-        console.log(data);
-        setRoutines(data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    postHandler();
-  }, []);
+    isLoggedIn ? fetchProfileData(setProfile) : null
+  }, [isLoggedIn])
 
-  const contextObj = {};
+  const contextObj = {
+    activitiesArr: [activities, setActivities],
+    routinesArr: [routines, setRoutines],
+    profileArr: [profile, setProfile],
+    isLoggedInState: [isLoggedIn, setIsLoggedIn],
+    personalRoutinesState: [personalRoutines, setPersonalRoutines]
+  };
+
   return (
     <div>
-      <Navbar />
+      <Navbar isLoggedIn={isLoggedIn}/>
       <Outlet context={contextObj} />
     </div>
   );
